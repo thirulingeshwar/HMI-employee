@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-dark: #5649c0;
+            --secondary: #a29bfe;
+            --success: #00b894;
+            --danger: #d63031;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --gray: #636e72;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #1e272e;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            width: 100%;
+            height: 70px;
+            background: rgba(30, 39, 46, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            position: fixed;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+        }
+
+        .links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .links li a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .links li a:hover {
+            color: white;
+        }
+
+        .links li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .links li a:hover::after {
+            width: 100%;
+        }
+
+        /* Main Content */
+        #main {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding-top: 70px;
+            background: radial-gradient(circle at 10% 20%, rgba(30, 39, 46, 0.8) 0%, rgba(44, 62, 80, 0.9) 90%);
+        }
+
+        #main h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, white, var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-align: center;
+            animation: floatText 3s ease-in-out infinite;
+        }
+
+        /* Notification Popup */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            z-index: 1000;
+            display: none;
+            opacity: 0;
+            transition: all 0.3s ease;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .employee-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(245, 245, 245, 0.95));
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .employee-card h1 {
+            color: var(--dark);
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .employee-card h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        .employee-card p {
+            color: var(--dark);
+            margin: 10px 0;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .employee-card form {
+            display: inline-block;
+            margin-top: 15px;
+            margin-right: 10px;
+        }
+
+        .accept-button {
+            background: linear-gradient(135deg, var(--success), #00cec9);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
+            min-width: 100px;
+        }
+
+        .accept-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(0, 184, 148, 0.4);
+        }
+
+        .accept-button:active {
+            transform: translateY(0);
+        }
+
+        .reject-button {
+            background: linear-gradient(135deg, var(--danger), #e17055);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(214, 48, 49, 0.3);
+            min-width: 100px;
+        }
+
+        .reject-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(214, 48, 49, 0.4);
+        }
+
+        .reject-button:active {
+            transform: translateY(0);
+        }
+
+        /* Animations */
+        @keyframes floatText {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 0 20px;
+            }
+            
+            .logo h1 {
+                font-size: 1.5rem;
+            }
+            
+            .links {
+                gap: 15px;
+            }
+            
+            #main h1 {
+                font-size: 2rem;
+            }
+            
+            .employee-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="overlay"></div>
+    <div id="popup">
+        {% for i in c %}
+        <div class="employee-card">
+            <h1>New Client Notification</h1>
+            <p><i class="fas fa-user"></i> From Employee: {{ i.cname }}</p>
+            <p><i class="fas fa-envelope"></i> {{ i.cemail }}</p>
+            <p><i class="fas fa-phone"></i> {{ i.cphone }}</p>
+            <p><i class="fas fa-shopping-bag"></i> {{ i.csell }}</p>
+            <form action="{{ url_for('Accept', id=i._id) }}" method="POST">
+                <button type="submit" class="accept-button">
+                    <i class="fas fa-check"></i> Accept
+                </button>
+            </form>
+            <form action="{{ url_for('Reject', id=i._id) }}" method="POST">
+                <button type="submit" class="reject-button">
+                    <i class="fas fa-times"></i> Reject
+                </button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+
+    <nav>
+        <div class="logo">
+            <h1>Thirulingesh Admin</h1>
+        </div>
+        <div class="links">
+            <li>
+                <a href="/hmi-manage/employee"><i class="fas fa-users"></i> Employees</a>
+            </li>
+            <li>
+                <a href="/show-accpted"><i class="fas fa-clipboard-check"></i> Accepted List</a>
+            </li>
+        </div>
+    </nav>
+
+    <section id="main">
+        <h1>Notifications Will Appear Here</h1>
+        <p>New client requests will show up automatically</p>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('overlay');
+            const cards = document.querySelectorAll('.employee-card');
+            
+            // Check if there are notifications
+            if('{{ c }}'.length > 2) { // More than just empty list representation
+                // Show overlay with fade in
+                overlay.style.display = 'block';
+                setTimeout(() => {
+                    overlay.style.opacity = '1';
+                }, 10);
+                
+                // Show popup with scale animation
+                popup.style.display = 'block';
+                setTimeout(() => {
+                    popup.style.opacity = '1';
+                    popup.style.transform = 'translate(-50%, -50%) scale(1)';
+                    
+                    // Animate each card with stagger
+                    cards.forEach((card, index) => {
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, index * 150);
+                    });
+                }, 100);
+                
+                // Close when clicking overlay
+                overlay.addEventListener('click', function() {
+                    popup.style.opacity = '0';
+                    popup.style.transform = 'translate(-50%, -50%) scale(0.9)';
+                    overlay.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        popup.style.display = 'none';
+                        overlay.style.display = 'none';
+                    }, 300);
+                });
+            } else {
+                popup.style.display = 'none';
+                overlay.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
