@@ -1,5 +1,5 @@
 from flask import Flask , redirect , flash , request , render_template , jsonify , url_for , session
- import CORS
+from flask_cors import CORS
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from datetime import timedelta
